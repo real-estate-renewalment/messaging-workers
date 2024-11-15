@@ -16,24 +16,24 @@ class Worker:
         self.host = host
 
     def callback(self, ch, method, properties, body):
-        print(f"Processing new request in thread {self.thread_id}")
-        try:
-            data = json.loads(body)
-            url = data.get('url')
-            body = data.get('body')
-            time.sleep(10)
-            response = requests.post(url, data=body, timeout=30)
-
-            if response.status_code == 200:
-                print("sent request succesfully!")
-                ch.basic_ack(delivery_tag=method.delivery_tag)
-            else:
-                print(f"Error processing request in thread {self.thread_id}")
-                ch.basic_nack(delivery_tag=method.delivery_tag)
-        except Exception as e:
-            print(f"Error processing request in thread {self.thread_id}: {str(e)}")
-            # If processing failed due to an error, you can choose to not acknowledge
-            ch.basic_nack(delivery_tag=method.delivery_tag)
+        print(f"Processing new request in thread {self.thread_id} for queue {self.queue_name}")
+        # try:
+        #     data = json.loads(body)
+        #     url = data.get('url')
+        #     body = data.get('body')
+        #     time.sleep(10)
+        #     response = requests.post(url, data=body, timeout=30)
+        #
+        #     if response.status_code == 200:
+        #         print("sent request succesfully!")
+        #         ch.basic_ack(delivery_tag=method.delivery_tag)
+        #     else:
+        #         print(f"Error processing request in thread {self.thread_id}")
+        ch.basic_nack(delivery_tag=method.delivery_tag)
+        # except Exception as e:
+        #     print(f"Error processing request in thread {self.thread_id}: {str(e)}")
+        #     # If processing failed due to an error, you can choose to not acknowledge
+        #     ch.basic_nack(delivery_tag=method.delivery_tag)
 
     # Function to start consuming messages
     def start_consuming(self):
